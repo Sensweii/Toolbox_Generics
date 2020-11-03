@@ -1,0 +1,9 @@
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Local setup
+secrets.json
+
+# Visual studio files
+.vscode
