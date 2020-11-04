@@ -1,10 +1,7 @@
 import jwt
-import requests
 
 from django.conf import settings
-from django.core.signing import Signer
 from django.core.mail import send_mail
-from django.urls import reverse
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
