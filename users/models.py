@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from .managers import UserManager
+
 
 class TimeStampModel(models.Model):
     """
@@ -19,8 +21,14 @@ class User(AbstractUser, TimeStampModel):
     """
         Model to override Django's default User model.
     """
-    email_address = models.EmailField()
+    username = None
+    email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=128, blank=True)
     last_name = models.CharField(max_length=128, blank=True)
     is_activated = models.BooleanField(default=False)
     last_login = models.DateTimeField(blank=True, null=True)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    objects = UserManager()

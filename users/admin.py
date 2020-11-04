@@ -7,7 +7,7 @@ class UserAdmin(admin.ModelAdmin):
     """
         Admin class for User model.
     """
-    list_display = ('email_address', 'is_activated')
+    list_display = ('email', 'is_activated')
 
 
 admin.site.register(User, UserAdmin)
