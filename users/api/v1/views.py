@@ -9,7 +9,10 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from users.models import User
+from .authentication import ActivationPermission
+from .authentication import OAuthHandler
 from .serializers import UsersSerializer
+from .serializers import UserActivationSerializer
 from .serializers import UsersRegistrationSerializer
 
 
@@ -39,10 +42,11 @@ class UsersViewSet(viewsets.ModelViewSet):
         recipient = serializer.validated_data['email']
         payload = {'recipient': str(recipient)}
         activation_token = jwt.encode(payload, settings.SECRET_KEY)
+        formatted_token = activation_token.decode('utf-8')
         subject = 'User Registered'
         message = (
             f'To activate account, use the following header when requesting '
-            f'at the activation endpoint. Authorization: {activation_token}')
+            f'at the activation endpoint. Authorization: {formatted_token}')
         sender = settings.EMAIL_HOST_USER
 
         send_mail(subject, message, sender, [recipient], fail_silently=False)
@@ -50,6 +54,23 @@ class UsersViewSet(viewsets.ModelViewSet):
             serializer.data,
             status=status.HTTP_201_CREATED)
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['post'],
+        permission_classes=[ActivationPermission])
     def activate(self, request, *args, **kwargs):
-        pass
+        serializer = UserActivationSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST)
+
+        email = serializer.validated_data['email']
+        user = User.objects.get(email=email)
+        user.is_activated = True
+        user.save()
+
+        # Register app upon activation of user
+        OAuthHandler.create_app(user)
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK)

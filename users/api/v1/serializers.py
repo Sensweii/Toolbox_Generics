@@ -22,9 +22,15 @@ class UsersRegistrationSerializer(serializers.ModelSerializer):
         fields = ['email', 'first_name', 'last_name', 'password']
 
 
-class UserActivationSerializer(serializers.ModelSerializer):
-    """Serializer for User Activation."""
+class UserActivationSerializer(serializers.Serializer):
+    """Email serializer for User Activation."""
+    email = serializers.EmailField()
 
-    class Meta:
-        model = User
-        fields = ['email']
+    def validate_email(self, email):
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            raise serializers.ValidationError('Invalid/Unregistered email.')
+        if user.is_activated:
+            raise serializers.ValidationError('Email already activated.')
+        return email
