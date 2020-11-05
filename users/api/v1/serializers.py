@@ -12,6 +12,18 @@ class UsersSerializer(serializers.ModelSerializer):
         fields = ['email', 'first_name', 'last_name']
 
 
+class UsersListSerializer(UsersSerializer):
+    """Add ID and Details link to model serializer."""
+    detail = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'first_name', 'last_name', 'detail']
+
+    def get_detail(self, obj):
+        return settings.API_USERS_URL + str(obj.id)
+
+
 class UsersRegistrationSerializer(serializers.ModelSerializer):
     """Serializer for User Registration."""
     password = serializers.CharField(max_length=128, required=True,

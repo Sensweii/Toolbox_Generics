@@ -14,6 +14,7 @@ from .authentication import ActivationPermission
 from .authentication import OAuthHandler
 from .serializers import UsersSerializer
 from .serializers import UserActivationSerializer
+from .serializers import UsersListSerializer
 from .serializers import UserLoginSerializer
 from .serializers import UsersRegistrationSerializer
 
@@ -24,9 +25,27 @@ class UsersViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.exclude(is_superuser=True)
     serializer_class = UsersSerializer
+    permission_classes = [AllowAny]
 
-    @action(detail=False, methods=['post'], permission_classes=[AllowAny])
-    def register(self, request, *args, **kwargs):
+    def list(self, request):
+        serializer = UsersListSerializer(data=self.queryset, many=True)
+        if not serializer.is_valid():
+            Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        limited_response = map(lambda x: {
+            'id': x['id'],
+            'first_name': x['first_name'],
+            'detail': x['detail']
+        }, serializer.data)
+        if request.auth:
+            return Response(serializer.data)
+        else:
+            return Response(limited_response)
+
+    @action(detail=False, methods=['post'])
+    def register(self, request):
         serializer = UsersRegistrationSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(
@@ -84,8 +103,8 @@ class UsersViewSet(viewsets.ModelViewSet):
             response,
             status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['post'], permission_classes=[AllowAny])
-    def login(self, request, *args, **kwargs):
+    @action(detail=False, methods=['post'])
+    def login(self, request):
         serializer = UserLoginSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(
