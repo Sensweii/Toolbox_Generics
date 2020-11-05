@@ -129,6 +129,10 @@ class UsersViewSet(viewsets.ModelViewSet):
         user = authenticate(
             email=serializer.validated_data['email'],
             password=serializer.validated_data['password'])
+        if not user:
+            return Response(
+            {'Invalid credentials.'},
+            status=status.HTTP_401_UNAUTHORIZED)
 
         # Generate token for logged in user
         token = OAuthHandler.create_token(user)
