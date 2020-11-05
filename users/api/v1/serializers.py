@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.urls import reverse
+from oauth2_provider.models import AccessToken
 from rest_framework import serializers
 
 from users.models import User
@@ -26,7 +27,7 @@ class UsersListSerializer(UsersSerializer):
 
 
 class UsersRegistrationSerializer(serializers.ModelSerializer):
-    """Serializer for User Registration."""
+    """Serializer for user registration."""
     password = serializers.CharField(max_length=128, required=True,
         write_only=True)
 
@@ -50,9 +51,10 @@ class UserActivationSerializer(serializers.Serializer):
 
 
 class UserLoginSerializer(serializers.Serializer):
-    """Email and password serializer for User Login."""
+    """Email and password serializer for user login."""
     email = serializers.EmailField(required=True)
-    password = serializers.CharField(max_length=128, required=True)
+    password = serializers.CharField(max_length=128, required=True,
+        write_only=True)
 
     def validate_email(self, email):
         try:
@@ -63,3 +65,37 @@ class UserLoginSerializer(serializers.Serializer):
     
     def validate_password(self, password):
         return password
+
+
+class UserPasswordSerializer(serializers.Serializer):
+    """Password serializer for user password change."""
+    password = serializers.CharField(max_length=128, required=True,
+        write_only=True)
+    pk = serializers.IntegerField(required=True)
+    token = serializers.CharField(max_length=128, required=True,
+        write_only=True)
+
+    def validate_password(self, password):
+        return password
+
+    def validate_pk(self, pk):
+        return int(pk)
+
+    def validate_token(self, token):
+        return token
+
+    def validate(self, data):
+        pk = data.get('pk')
+        password = data.get('password')
+        token = data.get('token')
+        user = User.objects.get(id=pk)
+        try:
+            access_token = AccessToken.objects.get(user=user, token=token)
+        except AccessToken.DoesNotExist:
+            raise serializers.ValidationError(
+                'Unathorized action.')
+        user.set_password(password)
+        user.save()
+        validated_data = user.__dict__
+        return dict([(k,v) for k,v in validated_data.items()
+            if k in ['id', 'email', 'first_name', 'last_name']])

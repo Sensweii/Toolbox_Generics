@@ -65,3 +65,20 @@ class OAuthHandler:
             'expires_on': expiration_time
         }
         return response_token
+
+
+class ChangePasswordPermission(BaseAuthentication):
+    """
+        Handles token verification for users changing password.
+    """
+
+    def has_permission(self, request, *args, **kwargs):
+        token = request.headers.get('Authorization')
+        formatted_token = token.replace('Bearer ', '')
+        try:
+            access = AccessToken.objects.get(
+                token=formatted_token,
+                expires__gt=timezone.now())
+        except AccessToken.DoesNotExist:
+            raise AuthenticationFailed('Invalid token.')
+        return True

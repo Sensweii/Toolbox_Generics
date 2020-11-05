@@ -11,11 +11,13 @@ from rest_framework.response import Response
 
 from users.models import User
 from .authentication import ActivationPermission
+from .authentication import ChangePasswordPermission
 from .authentication import OAuthHandler
 from .serializers import UsersSerializer
 from .serializers import UserActivationSerializer
 from .serializers import UsersListSerializer
 from .serializers import UserLoginSerializer
+from .serializers import UserPasswordSerializer
 from .serializers import UsersRegistrationSerializer
 
 
@@ -24,6 +26,7 @@ class UsersViewSet(viewsets.ModelViewSet):
         Viewset for handling users endpoint.
     """
     queryset = User.objects.exclude(is_superuser=True)
+    serializer_class = UsersSerializer
     permission_classes = [AllowAny]
 
     def retrieve(self, request, *args, **kwargs):
@@ -33,7 +36,9 @@ class UsersViewSet(viewsets.ModelViewSet):
             'email': instance.email,
             'first_name': instance.first_name,
             'last_name': instance.last_name,
-            'list': settings.API_USERS_URL
+            'list': settings.API_USERS_URL,
+            'change_password': (
+                f'{settings.API_USERS_URL}{instance.id}/change_password')
         }
         if request.auth:
             return Response(response)
@@ -129,4 +134,19 @@ class UsersViewSet(viewsets.ModelViewSet):
         token = OAuthHandler.create_token(user)
         return Response(
             token,
+            status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['patch'],
+        permission_classes=[ChangePasswordPermission])
+    def change_password(self, request, *args, **kwargs):
+        token = request.headers.get('Authorization').replace('Bearer ', '')
+        request.data.update({'token': token, 'pk': kwargs.get('pk')})
+        serializer = UserPasswordSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST)
+        response = serializer.validated_data
+        return Response(
+            response,
             status=status.HTTP_200_OK)
