@@ -3,6 +3,7 @@ from django.utils import timezone
 
 import jwt
 from oauthlib.common import generate_token
+from oauth2_provider.models import AccessToken
 from oauth2_provider.models import Application
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
@@ -43,7 +44,12 @@ class OAuthHandler:
             authorization_grant_type='password',
             client_type='public')
 
-    def create_token(user, app):
+    def create_token(user, app=None):
+        # Use default user_api app when not provided
+        if not app:
+            app = Application.objects.get(
+                user=user,
+                name=f'user_api_{user.id}')
         time_to_live = settings.OAUTH_TOKEN_TTL
         expiration_time = (
             timezone.now() + timezone.timedelta(seconds=time_to_live))

@@ -1,6 +1,7 @@
 import jwt
 
 from django.conf import settings
+from django.contrib.auth import authenticate
 from django.core.mail import send_mail
 from rest_framework import status
 from rest_framework import viewsets
@@ -13,6 +14,7 @@ from .authentication import ActivationPermission
 from .authentication import OAuthHandler
 from .serializers import UsersSerializer
 from .serializers import UserActivationSerializer
+from .serializers import UserLoginSerializer
 from .serializers import UsersRegistrationSerializer
 
 
@@ -71,6 +73,30 @@ class UsersViewSet(viewsets.ModelViewSet):
         # Register app upon activation of user
         OAuthHandler.create_app(user)
 
+        response = {
+            "email": user.email,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "registration_date": user.created_at,
+            "is_activated": user.is_activated
+        }
         return Response(
-            serializer.data,
+            response,
+            status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['post'], permission_classes=[AllowAny])
+    def login(self, request, *args, **kwargs):
+        serializer = UserLoginSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST)
+        user = authenticate(
+            email=serializer.validated_data['email'],
+            password=serializer.validated_data['password'])
+
+        # Generate token for logged in user
+        token = OAuthHandler.create_token(user)
+        return Response(
+            token,
             status=status.HTTP_200_OK)
