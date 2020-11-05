@@ -7,9 +7,10 @@ from users.models import User
 
 class UsersSerializer(serializers.ModelSerializer):
     """Model serializer for UserViewSet."""
+
     class Meta:
         model = User
-        fields = ['email', 'first_name', 'last_name']
+        fields = ['id', 'email', 'first_name', 'last_name']
 
 
 class UsersListSerializer(UsersSerializer):

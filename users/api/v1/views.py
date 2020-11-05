@@ -24,16 +24,27 @@ class UsersViewSet(viewsets.ModelViewSet):
         Viewset for handling users endpoint.
     """
     queryset = User.objects.exclude(is_superuser=True)
-    serializer_class = UsersSerializer
     permission_classes = [AllowAny]
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        response = {
+            'id': instance.id,
+            'email': instance.email,
+            'first_name': instance.first_name,
+            'last_name': instance.last_name,
+            'list': settings.API_USERS_URL
+        }
+        if request.auth:
+            return Response(response)
+        limited_response = dict([
+            (k,v) for k,v in response.items()
+            if k in ['id', 'first_name', 'list']])
+        return Response(limited_response)
 
     def list(self, request):
         serializer = UsersListSerializer(data=self.queryset, many=True)
-        if not serializer.is_valid():
-            Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        _ = serializer.is_valid()
         limited_response = map(lambda x: {
             'id': x['id'],
             'first_name': x['first_name'],
