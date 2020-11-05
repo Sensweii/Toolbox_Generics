@@ -19,6 +19,9 @@ from django.core.exceptions import ImproperlyConfigured
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Override this in production settings
+BASE_URL = 'http://localhost:8000'
+API_USERS_URL = BASE_URL + '/api/v1/users/'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
