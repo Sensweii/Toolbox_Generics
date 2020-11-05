@@ -6,7 +6,7 @@ Simple Users API
 ### /api/v1/users/
 - [GET] returns list of users excluding superusers, deleted, or inactive
 - Content-Type: application/json
-- Authorization: <oauth_token> `optional` returns more details when provided
+- Authorization: Bearer <oauth_token> `optional` returns more details when provided
 - Response: List of users
 ```
 [
@@ -24,7 +24,7 @@ Simple Users API
 ### /api/v1/users/<id:int>/
 - [GET] returns details of user, accepts integer url argument
 - Content-Type: application/json
-- Authorization: <oauth_token> `optional` returns more details when provided
+- Authorization: Bearer <oauth_token> `optional` returns more details when provided
 - Response:
 ```
     {
@@ -92,4 +92,29 @@ Simple Users API
 ``` 
 - Response:
 ```
+{
+    "access_token": str
+    "token_type": "Bearer"
+    "expires_on": datetime str
+}
+```
+
+### /api/v1/users/<id:int>/change_password/
+- [PATCH] updates user password
+- Content-Type: application/json
+- Authorization: Bearer <oauth_token> `required`
+- Request Body:
+```
+{
+    "password": str `required`
+}
+```
+- Response:
+```
+{
+    "id": int
+    "email": str
+    "first_name": str
+    "last_name": str
+}
 ```
