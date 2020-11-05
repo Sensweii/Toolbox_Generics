@@ -1,8 +1,5 @@
-import jwt
-
 from django.conf import settings
 from django.contrib.auth import authenticate
-from django.core.mail import send_mail
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -19,6 +16,7 @@ from .serializers import UsersListSerializer
 from .serializers import UserLoginSerializer
 from .serializers import UserPasswordSerializer
 from .serializers import UsersRegistrationSerializer
+from .utils import EmailSender
 
 
 class UsersViewSet(viewsets.ModelViewSet):
@@ -77,16 +75,7 @@ class UsersViewSet(viewsets.ModelViewSet):
 
         # Generate activation authorization token and send email
         recipient = serializer.validated_data['email']
-        payload = {'recipient': str(recipient)}
-        activation_token = jwt.encode(payload, settings.SECRET_KEY)
-        formatted_token = activation_token.decode('utf-8')
-        subject = 'User Registered'
-        message = (
-            f'To activate account, use the following header when requesting '
-            f'at the activation endpoint. Authorization: {formatted_token}')
-        sender = settings.EMAIL_HOST_USER
-
-        send_mail(subject, message, sender, [recipient], fail_silently=False)
+        EmailSender.send_registration_email(recipient)
         return Response(
             serializer.data,
             status=status.HTTP_201_CREATED)
