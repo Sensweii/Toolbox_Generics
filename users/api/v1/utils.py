@@ -25,7 +25,7 @@ class EmailSender:
         )
 
     def send_registration_email(self, user):
-        payload = {'recipient': str(user.id)}
+        payload = {'recipient': user.id}
         activation_token = jwt.encode(payload, settings.SECRET_KEY)
         formatted_token = activation_token.decode('utf-8')
         subject = 'User Registered'

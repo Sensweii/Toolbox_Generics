@@ -27,11 +27,15 @@ class UserUpdatePermission(BasePermission):
                 bytes(token, 'utf-8'), settings.SECRET_KEY)
         except jwt.exceptions.InvalidSignatureError:
             raise PermissionDenied(detail='Token signature mismatch.')
+        except jwt.exceptions.DecodeError:
+            raise PermissionDenied(detail='Invalid token.')
         except TypeError:
             raise PermissionDenied('Invalid token.')
         if decoded_token['recipient'] != user_id:
-            raise PermissionDenied('Email token mismatch.')
-        return True
+            raise PermissionDenied('User token mismatch.')
+        else:
+            return True
+        return False
 
     def verify_oauth_token(self, request, obj):
         token = request.headers.get('Authorization')
