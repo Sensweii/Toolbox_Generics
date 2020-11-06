@@ -5,7 +5,7 @@ __pycache__/
 # Local setup
 secrets.json
 .DS_Store
-db.
+db.sqlite3
 
 # Visual studio files
 .vscode
