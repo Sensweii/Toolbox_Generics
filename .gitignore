@@ -4,6 +4,7 @@ __pycache__/
 
 # Local setup
 secrets.json
+.DS_Store
 
 # Visual studio files
 .vscode
