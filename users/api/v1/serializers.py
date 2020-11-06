@@ -6,7 +6,7 @@ from rest_framework import serializers
 from users.models import User
 
 
-class UsersSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     """Model serializer for UserViewSet."""
 
     class Meta:
@@ -14,7 +14,7 @@ class UsersSerializer(serializers.ModelSerializer):
         fields = ['id', 'email', 'first_name', 'last_name']
 
 
-class UsersListSerializer(UsersSerializer):
+class UserListSerializer(UserSerializer):
     """Add ID and Details link to model serializer."""
     detail = serializers.SerializerMethodField()
 
@@ -26,7 +26,7 @@ class UsersListSerializer(UsersSerializer):
         return settings.API_USERS_URL + str(obj.id)
 
 
-class UsersRegistrationSerializer(serializers.ModelSerializer):
+class UserRegistrationSerializer(serializers.ModelSerializer):
     """Serializer for user registration."""
     password = serializers.CharField(max_length=128, required=True,
         write_only=True)

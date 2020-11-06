@@ -8,23 +8,23 @@ from rest_framework.response import Response
 
 from users.models import User
 from .authentication import ActivationPermission
-from .authentication import ChangePasswordPermission
+from .authentication import ResourceUpdatePermission
 from .authentication import OAuthHandler
-from .serializers import UsersSerializer
+from .serializers import UserSerializer
 from .serializers import UserActivationSerializer
-from .serializers import UsersListSerializer
+from .serializers import UserListSerializer
 from .serializers import UserLoginSerializer
 from .serializers import UserPasswordSerializer
-from .serializers import UsersRegistrationSerializer
+from .serializers import UserRegistrationSerializer
 from .utils import EmailSender
 
 
-class UsersViewSet(viewsets.ModelViewSet):
+class UserViewSet(viewsets.ModelViewSet):
     """
         Viewset for handling users endpoint.
     """
     queryset = User.objects.exclude(is_superuser=True)
-    serializer_class = UsersSerializer
+    serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
     def retrieve(self, request, *args, **kwargs):
@@ -46,7 +46,7 @@ class UsersViewSet(viewsets.ModelViewSet):
         return Response(limited_response)
 
     def list(self, request):
-        serializer = UsersListSerializer(data=self.queryset, many=True)
+        serializer = UserListSerializer(data=self.queryset, many=True)
         _ = serializer.is_valid()
         limited_response = map(lambda x: {
             'id': x['id'],
@@ -60,7 +60,7 @@ class UsersViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'])
     def register(self, request):
-        serializer = UsersRegistrationSerializer(data=request.data)
+        serializer = UserRegistrationSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(
                 serializer.errors,
@@ -130,7 +130,7 @@ class UsersViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['patch'],
-        permission_classes=[ChangePasswordPermission])
+        permission_classes=[ResourceUpdatePermission])
     def change_password(self, request, *args, **kwargs):
         token = request.headers.get('Authorization').replace('Bearer ', '')
         request.data.update({'token': token, 'pk': kwargs.get('pk')})

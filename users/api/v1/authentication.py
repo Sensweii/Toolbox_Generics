@@ -67,7 +67,7 @@ class OAuthHandler:
         return response_token
 
 
-class ChangePasswordPermission(BaseAuthentication):
+class ResourceUpdatePermission(BaseAuthentication):
     """
         Handles token verification for users changing password.
     """
