@@ -1,7 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
 
-from api.v1.authentications import OAuthHandler
 from users.models import User
 from .permissions import UserUpdatePermission
 from .serializers import UserCreateSerializer
@@ -41,4 +40,3 @@ class UserViewSet(viewsets.ModelViewSet):
         user = self.get_object()
         password = self.request.data.get('password')
         user.update_password(password=password)
-        OAuthHandler.create_app(user)

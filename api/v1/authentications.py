@@ -15,16 +15,9 @@ class OAuthHandler:
         Handle OAuth flow methods such as registering app and generating tokens.
     """
 
-    def create_app(user):
-        name = f'toolbox_generics_{user.id}'
-        app = Application.objects.get_or_create(
-            user=user,
-            name=name,
-            authorization_grant_type='password',
-            client_type='public')
-        return app
-
-    def create_token(user, app=None):
+    def request_token(user, app=None):
+        # Requests token from authorization server
+        # TODO: Update this code, wrong implementation
         if not app:
             app = Application.objects.get(
                 user=user,
@@ -60,5 +53,5 @@ class UserAuthentication:
         elif not user.is_activated:
             raise AuthenticationFailed(detail='Unactivated account.')
 
-        token = OAuthHandler.create_token(user)
+        token = OAuthHandler.request_token(email, password)
         return token
