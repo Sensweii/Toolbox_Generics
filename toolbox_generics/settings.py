@@ -166,3 +166,4 @@ EMAIL_USE_SSL = False
 
 # OAuth
 OAUTH_TOKEN_TTL = 36000
+FIRST_PARTY_APP_NAME = 'users_app'
