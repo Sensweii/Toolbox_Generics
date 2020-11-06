@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework.serializers import HyperlinkedModelSerializer
+from rest_framework.serializers import ModelSerializer
 
 from users.models import User
 
@@ -8,7 +9,10 @@ class UserSerializer(HyperlinkedModelSerializer):
     """Serializer for User."""
     class Meta:
         model = User
-        fields = ['id', 'email', 'first_name', 'last_name']
+        fields = ['id', 'email', 'first_name', 'last_name', 'url']
+        extra_kwargs = {
+            'url': {'view_name': 'users-detail'}
+        }
 
 
 class UserPartialSerializer(UserSerializer):
@@ -18,8 +22,10 @@ class UserPartialSerializer(UserSerializer):
     """
     class Meta:
         model = User
-        fields = ['id', 'first_name']
-
+        fields = ['id', 'first_name', 'url']
+        extra_kwargs = {
+            'url': {'view_name': 'users-detail'}
+        }
 
 class UserCreateSerializer(UserSerializer):
     """Serializer for User create/register."""
@@ -33,5 +39,9 @@ class UserCreateSerializer(UserSerializer):
             'first_name',
             'last_name',
             'is_activated',
-            'password',
+            'url',
+            'password'
         ]
+        extra_kwargs = {
+            'url': {'view_name': 'users-detail'}
+        }
