@@ -3,8 +3,11 @@ Simple Users API
 
 ## Endpoints
 
+
 ### /api/v1/users/
-- [GET] returns list of users excluding superusers, deleted, or inactive
+__________________
+#### [GET]
+- returns list of users excluding superusers, deleted, or inactive
 - Content-Type: application/json
 - Authorization: Bearer <oauth_token> `optional` returns more details when provided
 - Response: List of users
@@ -15,30 +18,13 @@ Simple Users API
         "email": str (with token)
         "first_name": str
         "last_name": str (with token)
-        "detail": <link to detail view>
+        "url": <link to resource>
     },
     {...}
 ]
 ```
-
-### /api/v1/users/<id:int>/
-- [GET] returns details of user, accepts integer url argument
-- Content-Type: application/json
-- Authorization: Bearer <oauth_token> `optional` returns more details when provided
-- Response:
-```
-    {
-        "id": int
-        "email": str (with token)
-        "first_name": str
-        "last_name": str (with token)
-        "list": <link to list view>
-        "change_password": <link to change password>
-    }
-```
-
-### /api/v1/users/register/
-- [POST] creates user entry, will send e-mail to user email with activation code
+#### [POST]
+- creates user entry, will send e-mail to user email with activation code
 - Content-Type: application/json
 - Request Body:
 ```
@@ -56,57 +42,38 @@ Simple Users API
     "email": str
     "first_name": str
     "last_name": str
+    "url": <link to resource>
 }
 ```
 
-### /api/v1/users/activate/
-- [POST] activates user account, requires activation code from email
+
+### /api/v1/users/<id:int>/
+___________________________
+#### [GET] 
+- returns details of user, accepts integer argument
 - Content-Type: application/json
-- Authorization: <activation_code>
-- Request Body:
-```
-{
-    "email": str `required`
-}
-```
+- Authorization: Bearer <oauth_token> `optional` returns more details when provided
 - Response:
 ```
 {
-    "email": str
+    "id": int
+    "email": str (with token)
     "first_name": str
-    "last_name": str
-    "registration_date": datetime str
-    "is_activated": true
+    "last_name": str (with token)
+    "url": <link to resource>
 }
 ```
-
-### /api/v1/users/login/
-- [POST] requests login for user
+#### [PATCH]
+- updates details of user, accepts integer argument
+- can be used in two cases: (1) user activation and (2) details update e.g. email, password, last_name, etc.
 - Content-Type: application/json
-- Request Body:
-```
-      {
-        "email": str `required`
-        "password": str `required`
-      }
-``` 
-- Response:
-```
-{
-    "access_token": str
-    "token_type": "Bearer"
-    "expires_on": datetime str
-}
-```
 
-### /api/v1/users/<id:int>/change_password/
-- [PATCH] updates user password
-- Content-Type: application/json
-- Authorization: Bearer <oauth_token> `required`
+##### Case 1: User Activation
+- Authorization: <activation_code> `from email`
 - Request Body:
 ```
 {
-    "password": str `required`
+    "is_activated": true `required`
 }
 ```
 - Response:
@@ -116,5 +83,49 @@ Simple Users API
     "email": str
     "first_name": str
     "last_name": str
+    "is_activated": bool
+    "url": <link to resource>
+}
+```
+##### Case 2: Info Update
+- Authorization: Bearer <oauth_token> `required`
+- Request Body: Can accept several parameters. Using the `is_activated` field reverts behavior to Case 1.
+```
+{
+    "password": str
+}
+```
+- Response:
+```
+{
+    "id": int
+    "email": str
+    "first_name": str
+    "last_name": str
+    "is_activated": bool
+    "url": <link to resource>
+}
+```
+
+### /api/v1/login/
+__________________
+#### [POST] 
+- requests login for user
+- Content-Type: application/json
+- Request Body:
+```
+  {
+    "email": str `required`
+    "password": str `required`
+  }
+``` 
+- Response:
+```
+{
+    "access_token": str
+    "expires_in": int (seconds)
+    "token_type": str
+    "scope": str
+    "refresh_token": str
 }
 ```
