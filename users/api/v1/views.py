@@ -10,12 +10,12 @@ from users.models import User
 from .authentication import ActivationPermission
 from .authentication import ResourceUpdatePermission
 from .authentication import OAuthHandler
+from .serializers import UserPartialSerializer
 from .serializers import UserSerializer
+from .serializers import UserCreateSerializer
 from .serializers import UserActivationSerializer
-from .serializers import UserListSerializer
 from .serializers import UserLoginSerializer
 from .serializers import UserPasswordSerializer
-from .serializers import UserRegistrationSerializer
 from .utils import EmailSender
 
 
@@ -27,58 +27,19 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        response = {
-            'id': instance.id,
-            'email': instance.email,
-            'first_name': instance.first_name,
-            'last_name': instance.last_name,
-            'list': settings.API_USERS_URL,
-            'change_password': (
-                f'{settings.API_USERS_URL}{instance.id}/change_password')
-        }
-        if request.auth:
-            return Response(response)
-        limited_response = dict([
-            (k,v) for k,v in response.items()
-            if k in ['id', 'first_name', 'list']])
-        return Response(limited_response)
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return UserCreateSerializer
+        if self.request.auth:
+            return super().get_serializer_class()
+        return UserPartialSerializer
 
-    def list(self, request):
-        serializer = UserListSerializer(data=self.queryset, many=True)
-        _ = serializer.is_valid()
-        limited_response = map(lambda x: {
-            'id': x['id'],
-            'first_name': x['first_name'],
-            'detail': x['detail']
-        }, serializer.data)
-        if request.auth:
-            return Response(serializer.data)
-        else:
-            return Response(limited_response)
-
-    @action(detail=False, methods=['post'])
-    def register(self, request):
-        serializer = UserRegistrationSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST)
-
-        # Save object, manually set password to trigger hashing
-        password = serializer.validated_data['password']
-        serializer.save()
-        user = User.objects.get(email=serializer.data['email'])
-        user.set_password(password)
-        user.save()
-
-        # Generate activation authorization token and send email
+    def perform_create(self, serializer):
+        user = User.objects.create_user(**serializer.validated_data)
+        
+        # Send email with activation token
         recipient = serializer.validated_data['email']
         EmailSender.send_registration_email(recipient)
-        return Response(
-            serializer.data,
-            status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['post'],
         permission_classes=[ActivationPermission])
