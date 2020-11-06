@@ -32,8 +32,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         user = User.objects.create_user(**serializer.validated_data)
         # Send email with activation token
-        recipient = serializer.validated_data['email']
-        EmailSender.send_registration_email(recipient)
+        EmailSender().send_registration_email(user)
 
     def perform_update(self, serializer):
         serializer.save()
