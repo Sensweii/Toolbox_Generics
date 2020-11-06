@@ -57,6 +57,9 @@ class UserUpdatePermission(BasePermission):
         activation_request = request.data.get('is_activated')
         if activation_request:
             permission_granted = self.verify_activation_token(request, obj)
+        elif type(activation_request) == bool:
+            raise PermissionDenied(detail='Update not allowed.')
+            permission_granted = False
         else:
             permission_granted = self.verify_oauth_token(request, obj)        
         return permission_granted
