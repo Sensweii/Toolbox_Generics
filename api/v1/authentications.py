@@ -19,7 +19,7 @@ class OAuthHandler:
                 name=settings.FIRST_PARTY_APP_NAME)
         url = settings.OAUTH_TOKEN_ENDPOINT
         response = requests.post(
-            data={
+            json={
                 'grant_type': 'password',
                 'username': email,
                 'password': password,
@@ -28,7 +28,7 @@ class OAuthHandler:
             },
             url=url
         )
-        return response
+        return response.json()
 
 class UserAuthentication:
     """
