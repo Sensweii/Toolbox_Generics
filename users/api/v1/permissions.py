@@ -21,7 +21,7 @@ class UserUpdatePermission(BasePermission):
 
     def verify_activation_token(self, request, obj):
         token = request.headers.get('Authorization')
-        user_email = obj.email
+        user_id = obj.id
         try:
             decoded_token = jwt.decode(
                 bytes(token, 'utf-8'), settings.SECRET_KEY)
@@ -29,7 +29,7 @@ class UserUpdatePermission(BasePermission):
             raise PermissionDenied(detail='Token signature mismatch.')
         except TypeError:
             raise PermissionDenied('Invalid token.')
-        if decoded_token['recipient'] != user_email:
+        if decoded_token['recipient'] != user_id:
             raise PermissionDenied('Email token mismatch.')
         return True
 
