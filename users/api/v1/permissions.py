@@ -21,6 +21,7 @@ class UserUpdatePermission(BasePermission):
 
     def verify_activation_token(self, request, obj):
         token = request.headers.get('Authorization')
+        user_email = obj.email
         try:
             decoded_token = jwt.decode(
                 bytes(token, 'utf-8'), settings.SECRET_KEY)
