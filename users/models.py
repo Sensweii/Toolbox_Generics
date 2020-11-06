@@ -32,3 +32,9 @@ class User(AbstractUser, TimeStampModel):
     REQUIRED_FIELDS = []
 
     objects = UserManager()
+
+    def update_password(self, password=None):
+        """Custom method to ensure password hashing on update."""
+        if password:
+            self.set_password(password)
+            self.save()
