@@ -17,7 +17,7 @@ class OAuthHandler:
     """
 
     def create_app(user):
-        name = f'user_api_{user.id}'
+        name = f'toolbox_generics_{user.id}'
         Application.objects.create(
             user=user,
             name=name,
@@ -25,11 +25,11 @@ class OAuthHandler:
             client_type='public')
 
     def create_token(user, app=None):
-        # Use default user_api app when not provided
+        # Use default toolbox_generics app when not provided
         if not app:
             app = Application.objects.get(
                 user=user,
-                name=f'user_api_{user.id}')
+                name=f'toolbox_generics_{user.id}')
         time_to_live = settings.OAUTH_TOKEN_TTL
         expiration_time = (
             timezone.now() + timezone.timedelta(seconds=time_to_live))
