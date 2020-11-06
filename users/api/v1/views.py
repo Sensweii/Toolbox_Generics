@@ -6,8 +6,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from users.models import User
-from .authentication import OAuthHandler
-from .authentication import UserUpdatePermission
+from .authentications import OAuthHandler
+from .permissions import UserUpdatePermission
 from .serializers import UserCreateSerializer
 from .serializers import UserLoginSerializer
 from .serializers import UserPartialSerializer
