@@ -30,7 +30,11 @@ class UserViewSet(viewsets.ModelViewSet):
         return UserPartialSerializer
 
     def perform_create(self, serializer):
-        user = User.objects.create_user(**serializer.validated_data)
+        serializer.save()
+        email = serializer.validated_data['email']
+        user = User.objects.get(email=email)
+        password = self.request.data.get('password')
+        user.update_password(password)
         # Send email with activation token
         EmailSender().send_registration_email(user)
 
