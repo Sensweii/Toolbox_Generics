@@ -10,7 +10,7 @@ from users.models import User
 
 class OAuthHandler:
     """
-        Handle OAuth flow methods such as registering app and generating tokens.
+    Handle OAuth flow methods such as registering app and generating tokens.
     """
 
     def request_token(email, password, app=None):
@@ -33,8 +33,8 @@ class OAuthHandler:
 
 class UserAuthentication:
     """
-        Class for handling authentication on User login requests.
-        Returns OAuth token.
+    Class for handling authentication on User login requests.
+    Returns OAuth token.
     """
 
     def update_last_login(self, user):
