@@ -6,7 +6,7 @@ from users.models import User
 
 
 class UserSerializer(HyperlinkedModelSerializer):
-    """Serializer for User."""
+    """Serializer for authenticated User."""
     class Meta:
         model = User
         fields = ['id', 'email', 'first_name', 'last_name', 'last_login', 'url']
@@ -17,8 +17,8 @@ class UserSerializer(HyperlinkedModelSerializer):
 
 class UserPartialSerializer(UserSerializer):
     """
-        Partial serializer for User. Removes `email` and `last_name` for
-        unauthenticated access.
+    Partial serializer for unauthenticated User. Removes `email`, `last_name`,
+    and `last_login`.
     """
     class Meta:
         model = User
@@ -26,6 +26,7 @@ class UserPartialSerializer(UserSerializer):
         extra_kwargs = {
             'url': {'view_name': 'users-detail'}
         }
+
 
 class UserCreateSerializer(UserSerializer):
     """Serializer for User create/register."""
