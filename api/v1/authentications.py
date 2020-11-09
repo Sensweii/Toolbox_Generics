@@ -1,6 +1,7 @@
 import requests
 
 from django.conf import settings
+from django.contrib.auth import authenticate
 from django.utils import timezone
 from oauth2_provider.models import Application
 from rest_framework.exceptions import AuthenticationFailed
@@ -44,12 +45,10 @@ class UserAuthentication:
     def authenticate(self, **kwargs):
         email = kwargs.get('email')
         password = kwargs.get('password')
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
+        user = authenticate(email=email, password=password)
+        if not user:
             raise AuthenticationFailed(detail='Invalid email.')
-
-        if not user.is_activated:
+        elif not user.is_activated:
             raise AuthenticationFailed(detail='Unactivated account.')
 
         token = OAuthHandler.request_token(email, password)
