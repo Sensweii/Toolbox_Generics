@@ -49,9 +49,28 @@ class UserCreateUpdateSerializer(UserSerializer):
             'first_name',
             'last_name',
             'url',
+            'is_activated',
             'password',
         ]
         extra_kwargs = {
             'url': {'view_name': 'users-detail'},
+            'is_activated': {'read_only': True},
             'password': {'write_only': True}
+        }
+
+
+class UserActivateSerializer(UserSerializer):
+    """Serializer for User activation."""
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'email',
+            'first_name',
+            'last_name',
+            'is_activated',
+            'url',
+        ]
+        extra_kwargs = {
+            'url': {'view_name': 'users-detail'},
         }
