@@ -29,8 +29,6 @@ class UserPartialSerializer(UserSerializer):
 
 class UserCreateSerializer(UserSerializer):
     """Serializer for User create/register."""
-    password = serializers.CharField(
-        max_length=128, required=True, write_only=True)
     class Meta:
         model = User
         fields = [
@@ -38,10 +36,10 @@ class UserCreateSerializer(UserSerializer):
             'email',
             'first_name',
             'last_name',
-            'is_activated',
             'url',
             'password'
         ]
         extra_kwargs = {
-            'url': {'view_name': 'users-detail'}
+            'url': {'view_name': 'users-detail'},
+            'password': {'write_only': True}
         }
