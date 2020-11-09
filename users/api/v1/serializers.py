@@ -55,4 +55,3 @@ class UserCreateUpdateSerializer(UserSerializer):
             'url': {'view_name': 'users-detail'},
             'password': {'write_only': True}
         }
-
