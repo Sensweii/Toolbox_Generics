@@ -18,7 +18,7 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
 
     def get_permissions(self):
-        if self.action in ['partial_update', 'update']:
+        if self.action in ['partial_update', 'update', 'destroy']:
             return [UserUpdatePermission()]
         return super().get_permissions()
 
