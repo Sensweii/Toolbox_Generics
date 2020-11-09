@@ -3,7 +3,7 @@ from rest_framework.permissions import AllowAny
 
 from users.models import User
 from .permissions import UserUpdatePermission
-from .serializers import UserCreateSerializer
+from .serializers import UserCreateUpdateSerializer
 from .serializers import UserPartialSerializer
 from .serializers import UserSerializer
 from .utils import EmailSender
@@ -24,7 +24,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if self.action in ['create', 'partial_update', 'update']:
-            return UserCreateSerializer
+            return UserCreateUpdateSerializer
         if self.request.auth:
             return super().get_serializer_class()
         return UserPartialSerializer
