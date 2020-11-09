@@ -77,7 +77,7 @@ ___________________________
 - updates details of user, accepts integer argument
 - Content-Type: application/json
 - Authorization: Bearer <oauth_token> `required`
-- Request Body: Can accept several parameters. Using the `is_activated` field reverts behavior to Case 1.
+- Request Body: Can accept several parameters. Updating `is_activated` field on this endpoint has no effect.
 ```
 {
     "password": str
@@ -98,7 +98,7 @@ ___________________________
 ### /api/v1/users/<id:int>/status
 _________________________________
 #### [PATCH]
-- updates is_activated field of user (activation step), accepts integer argument
+- Updates `is_activated` field of user (activation step), accepts integer argument
 - Content-Type: application/json
 - Authorization: <activation_code> `from email`
 - Request Body:
