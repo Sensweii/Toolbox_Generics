@@ -28,7 +28,8 @@ class UserUpdatePermission(BasePermission):
         except jwt.exceptions.InvalidSignatureError:
             raise PermissionDenied(detail='Token signature mismatch.')
         except jwt.exceptions.DecodeError:
-            raise PermissionDenied(detail='Invalid token.')
+            raise PermissionDenied(
+                detail='Invalid token or attempting multiple activation.')
         except TypeError:
             raise PermissionDenied('Invalid token.')
         if decoded_token['recipient'] != user_id:
