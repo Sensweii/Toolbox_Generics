@@ -74,3 +74,8 @@ class UserActivateSerializer(UserSerializer):
         extra_kwargs = {
             'url': {'view_name': 'users-detail'},
         }
+
+    def validate_is_activated(self, is_activated):
+        if is_activated:
+            return is_activated
+        raise serializers.ValidationError('Action not allowed.')
