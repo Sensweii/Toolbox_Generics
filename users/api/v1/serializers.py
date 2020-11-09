@@ -9,7 +9,7 @@ class UserSerializer(HyperlinkedModelSerializer):
     """Serializer for User."""
     class Meta:
         model = User
-        fields = ['id', 'email', 'first_name', 'last_name', 'url']
+        fields = ['id', 'email', 'first_name', 'last_name', 'last_login', 'url']
         extra_kwargs = {
             'url': {'view_name': 'users-detail'}
         }
@@ -22,7 +22,7 @@ class UserPartialSerializer(UserSerializer):
     """
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'url']
+        fields = ['id', 'first_name', 'last_login', 'url']
         extra_kwargs = {
             'url': {'view_name': 'users-detail'}
         }

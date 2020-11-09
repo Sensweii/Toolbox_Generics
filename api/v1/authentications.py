@@ -1,6 +1,7 @@
 import requests
 
 from django.conf import settings
+from django.utils import timezone
 from oauth2_provider.models import Application
 from rest_framework.exceptions import AuthenticationFailed
 
@@ -36,7 +37,11 @@ class UserAuthentication:
         Returns OAuth token.
     """
 
-    def authenticate(**kwargs):
+    def update_last_login(self, user):
+        user.last_login = timezone.now()
+        user.save()
+
+    def authenticate(self, **kwargs):
         email = kwargs.get('email')
         password = kwargs.get('password')
         try:
@@ -48,4 +53,6 @@ class UserAuthentication:
             raise AuthenticationFailed(detail='Unactivated account.')
 
         token = OAuthHandler.request_token(email, password)
+        if token.get('access_token'):
+            self.update_last_login(user)
         return token
