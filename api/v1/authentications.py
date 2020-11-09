@@ -3,6 +3,7 @@ import requests
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.utils import timezone
+
 from oauth2_provider.models import Application
 from rest_framework.exceptions import AuthenticationFailed
 
@@ -14,7 +15,7 @@ class OAuthHandler:
     Handle OAuth flow methods such as registering app and generating tokens.
     """
 
-    def request_token(email, password, app=None):
+    def request_token(self, email, password, app=None):
         # Requests token from authorization server
         if not app:
             app = Application.objects.get(
@@ -31,6 +32,7 @@ class OAuthHandler:
             url=url
         )
         return response.json()
+
 
 class UserAuthentication:
     """
@@ -51,7 +53,7 @@ class UserAuthentication:
         elif not user.is_activated:
             raise AuthenticationFailed(detail='Unactivated account.')
 
-        token = OAuthHandler.request_token(email, password)
+        token = OAuthHandler().request_token(email, password)
         if token.get('access_token'):
             self.update_last_login(user)
         return token
