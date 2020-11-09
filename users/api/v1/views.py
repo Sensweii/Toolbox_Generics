@@ -5,13 +5,13 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from users.models import User
+from .emails import RegistrationEmail
 from .permissions import UserActivatePermission
 from .permissions import UserUpdatePermission
 from .serializers import UserActivateSerializer
 from .serializers import UserCreateUpdateSerializer
 from .serializers import UserPartialSerializer
 from .serializers import UserSerializer
-from .utils import EmailSender
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -43,7 +43,7 @@ class UserViewSet(viewsets.ModelViewSet):
         password = self.request.data.get('password')
         user.update_password(password)
         # Send email with activation token
-        EmailSender().send_registration_email(user)
+        RegistrationEmail(user).send()
 
     def perform_update(self, serializer):
         serializer.save()
