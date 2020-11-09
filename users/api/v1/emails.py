@@ -68,6 +68,7 @@ class RegistrationEmail(Email):
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = user
+        self.recipients = [user.email]
 
     def generate_token(self):
         data = {'recipient': self.user.id}
@@ -77,5 +78,5 @@ class RegistrationEmail(Email):
     def get_context(self):
         return {
             'token': self.generate_token(),
-            'link': f'{settings.API_USERS_URL}/{self.user.id}/status/'
+            'link': f'{settings.API_USERS_URL}{self.user.id}/status/'
         }
