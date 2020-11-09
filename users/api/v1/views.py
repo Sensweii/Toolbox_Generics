@@ -42,4 +42,5 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer.save()
         user = self.get_object()
         password = self.request.data.get('password')
-        user.update_password(password=password)
+        if password:
+            user.update_password(password)
