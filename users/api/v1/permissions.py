@@ -58,7 +58,8 @@ class UserUpdatePermission(BasePermission):
         if activation_request:
             permission_granted = self.verify_activation_token(request, obj)
         elif type(activation_request) == bool:
-            raise PermissionDenied(detail='Update not allowed.')
+            raise PermissionDenied(detail=f'Reversing activation not allowed. '
+                f'Delete the account instead.')
             permission_granted = False
         else:
             permission_granted = self.verify_oauth_token(request, obj)        
