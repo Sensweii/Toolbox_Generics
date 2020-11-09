@@ -39,7 +39,7 @@ class UserPartialSerializer(UserSerializer):
         }
 
 
-class UserCreateSerializer(UserSerializer):
+class UserCreateUpdateSerializer(UserSerializer):
     """Serializer for User create/register."""
     class Meta:
         model = User
@@ -55,3 +55,4 @@ class UserCreateSerializer(UserSerializer):
             'url': {'view_name': 'users-detail'},
             'password': {'write_only': True}
         }
+
