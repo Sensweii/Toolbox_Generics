@@ -1,4 +1,5 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 
 from .managers import UserManager
@@ -6,8 +7,8 @@ from .managers import UserManager
 
 class TimeStampModel(models.Model):
     """
-        Base model for setting time stamps. Inherit this class when time
-        tracking is desired.
+    Base model for setting time stamps. Inherit this class when time
+    tracking is desired.
     """
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
@@ -17,24 +18,20 @@ class TimeStampModel(models.Model):
         abstract = True
 
 
-class User(AbstractUser, TimeStampModel):
-    """
-        Model to override Django's default User model.
-    """
-    username = None
+class User(AbstractBaseUser, PermissionsMixin, TimeStampModel):
+    """Model to override Django's User model."""
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=128, blank=True)
     last_name = models.CharField(max_length=128, blank=True)
-    is_activated = models.BooleanField(default=False)
-    last_login = models.DateTimeField(blank=True, null=True)
+    is_active = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     objects = UserManager()
 
-    def update_password(self, password=None):
-        """Custom method to ensure password hashing on update."""
-        if password:
-            self.set_password(password)
-            self.save()
+    def update_password(self, password):
+        """Method to ensure password hashing on update."""
+        self.set_password(password)
+        self.save()
