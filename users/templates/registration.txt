@@ -1,0 +1,6 @@
+
+To activate account, PATCH/UPDATE user field `is_activated`.
+Use the following header when requesting.
+Authorization: {{formatted_token}}
+
+Activation Link: {{link}}
