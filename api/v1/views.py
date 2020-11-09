@@ -1,3 +1,4 @@
+from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -18,3 +19,4 @@ class LoginView(GenericAPIView):
         if serializer.is_valid():
             token = UserAuthentication.authenticate(**serializer.data)
             return Response(token)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
