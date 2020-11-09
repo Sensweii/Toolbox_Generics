@@ -45,6 +45,10 @@ class UserAuthentication:
         user.save()
 
     def authenticate(self, **kwargs):
+        """
+        First party app authenticates user then requests token from
+        authorization server.
+        """
         email = kwargs.get('email')
         password = kwargs.get('password')
         user = authenticate(email=email, password=password)
