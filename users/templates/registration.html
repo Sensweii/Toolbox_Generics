@@ -3,11 +3,21 @@
 <body>
     <p>
         To activate account, PATCH/UPDATE user field `is_activated`.
-        Use the following header when requesting.
-        Authorization: {{token}}
+        Use the following when requesting.
     </p>
     <p>
         Activation Link: {{link}}
+    </p>
+    <p>
+        Request Headers:
+        <ul>
+            <li>Content-Type: application/json</li>
+            <li>Authorization: {{token}}</li>
+        </ul>
+        Request Body:
+        <ul>
+            <li>{ "is_activated": true }</li>
+        </ul>
     </p>
 </body>
 
