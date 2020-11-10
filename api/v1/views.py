@@ -8,9 +8,7 @@ from .serializers import LoginViewSerializer
 
 
 class LoginView(GenericAPIView):
-    """
-        Class for handling login requests.
-    """
+    """Class for handling login requests."""
     serializer_class = LoginViewSerializer
     permission_classes = [AllowAny]
 

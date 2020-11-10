@@ -4,9 +4,7 @@ from .models import User
 
 
 class UserAdmin(admin.ModelAdmin):
-    """
-        Admin class for User model.
-    """
+    """Admin class for User model."""
     list_display = ('email', 'is_activated')
 
 

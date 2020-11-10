@@ -15,9 +15,7 @@ from .serializers import UserSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    """
-        Viewset for handling users endpoint.
-    """
+    """Viewset for handling users endpoint."""
     queryset = User.objects.exclude(is_superuser=True)
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
