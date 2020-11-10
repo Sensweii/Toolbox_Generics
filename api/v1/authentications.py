@@ -7,8 +7,6 @@ from django.utils import timezone
 from oauth2_provider.models import Application
 from rest_framework.exceptions import AuthenticationFailed
 
-from users.models import User
-
 
 class OAuthHandler:
     """
