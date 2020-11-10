@@ -7,8 +7,6 @@ from oauth2_provider.models import AccessToken
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import BasePermission
 
-from users.models import User
-
 
 class UserUpdatePermission(BasePermission):
     """
@@ -29,7 +27,7 @@ class UserUpdatePermission(BasePermission):
             raise PermissionDenied(detail='Invalid token.')
         return True
 
-    def has_object_permission(self, request, view, obj):        
+    def has_object_permission(self, request, view, obj):
         return self.verify_oauth_token(request, obj)
 
 
@@ -56,5 +54,5 @@ class UserActivatePermission(BasePermission):
             return True
         return False
 
-    def has_object_permission(self, request, view, obj):        
+    def has_object_permission(self, request, view, obj):
         return self.verify_activation_token(request, obj)

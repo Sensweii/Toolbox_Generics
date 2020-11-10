@@ -1,9 +1,6 @@
-from django.conf import settings
-from django.core.mail import send_mail
-from django.template.loader import get_template
-
 import jwt
 
+from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
@@ -74,7 +71,7 @@ class RegistrationEmail(Email):
         data = {'recipient': self.user.id}
         activation_token = jwt.encode(data, settings.SECRET_KEY)
         return activation_token.decode('utf-8')
-    
+
     def get_context(self):
         return {
             'token': self.generate_token(),

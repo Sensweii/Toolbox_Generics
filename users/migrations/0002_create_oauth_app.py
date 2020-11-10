@@ -10,6 +10,7 @@ def create_users_api_oauth_app(apps, schema_editor):
         authorization_grant_type='password'
     )
 
+
 def reverse_create_users_api_oauth_app(apps, schema_editor):
     Application = apps.get_model('oauth2_provider', 'Application')
     app = Application.objects.get(

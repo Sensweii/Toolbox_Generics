@@ -26,7 +26,7 @@ class User(AbstractBaseUser, PermissionsMixin, TimeStampModel):
     is_active = models.BooleanField(default=True)
     is_activated = models.BooleanField(
         default=False,
-        help_text='Set to True for users that activated resources via the API.')
+        help_text='Set `True` for users that activated resources via the API.')
     is_staff = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'

@@ -1,4 +1,4 @@
-from django.contrib.auth.models import BaseUserManager ## A new class is imported. ##
+from django.contrib.auth.models import BaseUserManager
 
 
 class UserManager(BaseUserManager):
