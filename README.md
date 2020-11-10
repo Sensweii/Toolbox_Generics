@@ -8,6 +8,13 @@ Offers a login endpoint that responds with OAuth token for authenticating reques
 - pip
 - other packages: pip install -r requirements.txt
 
+### Secrets.json
+- For local setup, create a copy of secrets_template.json and populate the fields.
+
+### Email Sending
+- The app currently uses Google SMTP as a free email sending service.
+- To enable email sending for EMAIL_HOST_USER (defined in settings), go to gmail account settings > security settings > and turn `ON` access of non-secure apps. For security purposes, developers may want to use a dummy gmail account when testing.
+
 ### For developer setup
 - python manage.py runserver --settings=toolbox_generics.settings.dev
 
