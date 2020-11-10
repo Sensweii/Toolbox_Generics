@@ -15,12 +15,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 with open('secrets.json') as secret_file:
     secrets = json.loads(secret_file.read())
 
+
 def get_secret(setting, secrets=secrets):
     try:
         return secrets[setting]
     except KeyError:
         error_msg = f'Set the {setting} environment variable.'
         raise ImproperlyConfigured(error_msg)
+
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = get_secret('SECRET_KEY')
@@ -117,7 +119,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Default user override
-AUTH_USER_MODEL='users.User'
+AUTH_USER_MODEL = 'users.User'
 
 
 # Rest framework
