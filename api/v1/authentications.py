@@ -1,11 +1,8 @@
 import requests
 
 from django.conf import settings
-from django.contrib.auth import authenticate
-from django.utils import timezone
 
 from oauth2_provider.models import Application
-from rest_framework.exceptions import AuthenticationFailed
 
 
 class OAuthHandler:
@@ -38,24 +35,11 @@ class UserAuthentication:
     Returns OAuth token.
     """
 
-    def update_last_login(self, user):
-        user.last_login = timezone.now()
-        user.save()
-
     def authenticate(self, **kwargs):
         """
-        First party app authenticates user then requests token from
-        authorization server.
+        First party app requests token from authorization server.
         """
         email = kwargs.get('email')
         password = kwargs.get('password')
-        user = authenticate(email=email, password=password)
-        if not user:
-            raise AuthenticationFailed(detail='Invalid email.')
-        elif not user.is_activated:
-            raise AuthenticationFailed(detail='Unactivated account.')
-
         token = OAuthHandler().request_token(email, password)
-        if token.get('access_token'):
-            self.update_last_login(user)
         return token
